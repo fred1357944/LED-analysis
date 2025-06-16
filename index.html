@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>輔大LED燈具安裝分析與節能效益評估</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'PingFang TC', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px 0;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .card {
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            font-weight: bold;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #4682B4;
+        }
+        .nav-pills .nav-link {
+            color: #333;
+            border-radius: 20px;
+            margin: 0 5px;
+            padding: 8px 16px;
+        }
+        .nav-pills .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .statistic-box {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .statistic-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4682B4;
+            margin: 10px 0;
+        }
+        .statistic-label {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+        .reason-list {
+            padding-left: 20px;
+        }
+        .reason-list li {
+            margin-bottom: 8px;
+        }
+        .energy-icon {
+            font-size: 2rem;
+            color: #4682B4;
+            margin-bottom: 10px;
+        }
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }
+        .progress {
+            height: 25px;
+            font-size: 0.9rem;
+            background-color: #e9ecef;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: #fff;
+            background-color: #4682B4;
+        }
+        .formula-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #4682B4;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .formula {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .formula-description {
+            margin-bottom: 5px;
+        }
+        .calculation-example {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .parameter-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        .parameter-table th, .parameter-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .parameter-table th {
+            font-weight: bold;
+            background-color: #f1f1f1;
+        }
+        .highlight-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+            background-color: #4682B4;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background-color: #4682B4;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            opacity: 0.3;
+        }
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            left: 0;
+            margin-bottom: 20px;
+        }
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            right: -10px;
+            background-color: white;
+            border: 4px solid #4682B4;
+            top: 22px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+        .timeline-item:nth-child(even)::after {
+            left: -10px;
+        }
+        .timeline-content {
+            padding: 20px;
+            background-color: white;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .timeline-content h4 {
+            margin-top: 0;
+        }
+        .timeline-year {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-weight: bold;
+            color: #4682B4;
+        }
+        .achievement-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+            background-color: #28a745;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        .project-table th, .project-table td {
+            padding: 0.75rem;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .project-table th {
+            font-weight: bold;
+            background-color: #f8f9fa;
+            text-align: center;
+        }
+        .project-table td {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="mb-2">輔大LED燈具安裝分析與節能效益評估</h1>
+            <p class="text-muted">基於110年度輔大-改善後LED燈具安裝數量表</p>
+        </div>
+
+        <!-- 導航選項卡 -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab">計畫背景</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="coverage-tab" data-bs-toggle="tab" data-bs-target="#coverage-tab-pane" type="button" role="tab">LED覆蓋率</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="buildings-tab" data-bs-toggle="tab" data-bs-target="#buildings-tab-pane" type="button" role="tab">建築物分析</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="types-tab" data-bs-toggle="tab" data-bs-target="#types-tab-pane" type="button" role="tab">燈具類型分析</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="energy-tab" data-bs-toggle="tab" data-bs-target="#energy-tab-pane" type="button" role="tab">節能效益分析</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="calculation-tab" data-bs-toggle="tab" data-bs-target="#calculation-tab-pane" type="button" role="tab">計算方法說明</button>
+            </li>
+        </ul>
+
+        <!-- 選項卡內容 -->
+        <div class="tab-content" id="myTabContent">
+            <!-- 計畫背景與歷年成果 -->
+            <div class="tab-pane fade show active" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                <div class="card mb-4">
+                    <div class="card-header">輔仁大學節能減碳計畫背景</div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-12">
+                                <p>輔仁大學長期致力於推動校園永續發展與節能減碳，透過系統性的規劃與執行，持續改善校園能源使用效率，降低碳排放量。本分析報告特別聚焦於校園LED燈具的安裝與節能效益，作為輔大節能減碳計畫的重要一環。</p>
+                                
+                                <div class="alert alert-success mt-3 mb-4">
+                                    <h5 class="alert-heading">計畫願景</h5>
+                                    <p class="mb-0">透過全面規劃與執行節能減碳措施，提升校園能源使用效率，營造永續友善環境，同時減少碳排放，為全球氣候變遷減緩貢獻力量。</p>
+                                </div>
+                                
+                                <h5 class="mt-4 mb-3">歷年重要節能減碳計畫</h5>
+                                
+                                <div class="table-responsive">
+                                    <table class="project-table">
+                                        <thead>
+                                            <tr>
+                                                <th width="15%">年度</th>
+                                                <th width="20%">補助單位</th>
+                                                <th width="25%">計畫名稱</th>
+                                                <th width="40%">簡述成效</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center">107-112</td>
+                                                <td>經濟部能源局</td>
+                                                <td>2018年度節能績效保證示範補助計畫</td>
+                                                <td>4年期計畫完成後相較完成前每年減少939.4公噸CO<sub>2</sub>e</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">110-115</td>
+                                                <td>經濟部能源局</td>
+                                                <td>2021年度節能績效保證示範補助計畫</td>
+                                                <td>4年期計畫完成後相較完成前每年減少737公噸CO<sub>2</sub>e</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">112</td>
+                                                <td>教育部</td>
+                                                <td>112年建構智慧化氣候友善校園-基礎計畫</td>
+                                                <td>建立結合環境因子的用電預測模型與結合GIS的碳源/碳匯地圖</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center">110</td>
+                                                <td>校內自籌</td>
+                                                <td>校園LED燈具全面更換計畫</td>
+                                                <td>完成全校98%燈具更換為LED，年減碳550.58公噸CO<sub>2</sub></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <h5 class="mt-4 mb-3">節能減碳工作重點</h5>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title"><i class="fas fa-lightbulb" style="color: #4682B4;"></i> 照明系統升級</h6>
+                                                <ul class="mb-0 ps-3">
+                                                    <li>全面更換為高效能LED燈具</li>
+                                                    <li>導入樓層分區照明控制系統</li>
+                                                    <li>走廊與公共區域照明調整</li>
+                                                    <li>感應式照明系統建置</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title"><i class="fas fa-temperature-low" style="color: #4682B4;"></i> 空調系統優化</h6>
+                                                <ul class="mb-0 ps-3">
+                                                    <li>空調設備汰舊換新</li>
+                                                    <li>空調溫度集中控管</li>
+                                                    <li>冰水主機效能提升</li>
+                                                    <li>空調時段最佳化</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title"><i class="fas fa-solar-panel" style="color: #4682B4;"></i> 綠色能源推動</h6>
+                                                <ul class="mb-0 ps-3">
+                                                    <li>太陽能板設置計畫</li>
+                                                    <li>再生能源應用研究</li>
+                                                    <li>智慧能源管理系統建置</li>
+                                                    <li>校園微電網規劃</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title"><i class="fas fa-leaf" style="color: #4682B4;"></i> 永續校園營造</h6>
+                                                <ul class="mb-0 ps-3">
+                                                    <li>校園綠化與碳匯增加</li>
+                                                    <li>節能教育宣導活動</li>
+                                                    <li>綠建築理念導入</li>
+                                                    <li>智慧水資源管理</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-2 mb-3">LED燈具更換計畫在節能減碳藍圖中的角色</h5>
+                        <p>LED燈具更換計畫是輔仁大學全校性節能減碳策略的關鍵一環，透過全面性的燈具更換，不僅能大幅提升照明能源使用效率，也為校園減碳工作奠定良好基礎。此計畫與其他節能措施相輔相成，共同推動輔大邁向低碳永續校園的目標。</p>
+                        
+                        <div class="alert alert-info mt-4">
+                            <h5 class="alert-heading">計畫亮點</h5>
+                            <ul class="mb-0">
+                                <li>覆蓋率高達98%，位居全國大專校院前列</li>
+                                <li>年減碳效益550.58公噸CO<sub>2</sub>，相當於3,670棵樹一年碳吸收量</li>
+                                <li>年節省電費達3,245,054元，為學校帶來實質經濟效益</li>
+                                <li>建立節能效益評估模型，可為未來節能計畫提供參考依據</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LED覆蓋率 -->
+            <div class="tab-pane fade" id="coverage-tab-pane" role="tabpanel" aria-labelledby="coverage-tab" tabindex="0">
+                <div class="card">
+                    <div class="card-header">LED燈具覆蓋率分析</div>
+                    <div class="card-body">
+                        <p class="text-center">全校燈具總數推估為 15,750 個</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="chart-container">
+                                    <canvas id="coverageChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">覆蓋率說明</div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div style="width: 16px; height: 16px; background-color: #4CAF50; margin-right: 8px;"></div>
+                                                <strong>已安裝LED燈具: 15,435 個 (98%)</strong>
+                                            </div>
+                                            <p class="text-muted ms-4">校園中絕大多數區域已完成LED燈具升級</p>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <div style="width: 16px; height: 16px; background-color: #FF9800; margin-right: 8px;"></div>
+                                                <strong>未更換燈具: 315 個 (2%)</strong>
+                                            </div>
+                                            <p class="text-muted ms-4">由於特殊設備需求，部分區域不適合使用LED燈具</p>
+                                        </div>
+                                        
+                                        <div class="mt-3 pt-3 border-top">
+                                            <h5>主要未更換原因</h5>
+                                            <ul class="reason-list">
+                                                <li>特殊光譜要求設備（如特定實驗室）</li>
+                                                <li>高溫環境不適合使用LED燈具</li>
+                                                <li>舞台/展覽特殊照明需求</li>
+                                                <li>設備相容性問題</li>
+                                                <li>歷史建築保存需求</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 建築物分析 -->
+            <div class="tab-pane fade" id="buildings-tab-pane" role="tabpanel" aria-labelledby="buildings-tab" tabindex="0">
+                <div class="card">
+                    <div class="card-header">建築物燈具安裝分析</div>
+                    <div class="card-body">
+                        <p class="text-center">已安裝LED燈具總數: 15,435 個</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="buildingsPieChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="buildingsBarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>建築物名稱</th>
+                                        <th class="text-end">燈具數量</th>
+                                        <th class="text-end">佔比</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="buildingsTableBody">
+                                    <!-- 資料將由JavaScript填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 燈具類型分析 -->
+            <div class="tab-pane fade" id="types-tab-pane" role="tabpanel" aria-labelledby="types-tab" tabindex="0">
+                <div class="card">
+                    <div class="card-header">燈具類型分析</div>
+                    <div class="card-body">
+                        <p class="text-center">已安裝LED燈具總數: 15,435 個</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="typesPieChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="chart-container">
+                                    <canvas id="typesBarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>燈具類型</th>
+                                        <th class="text-end">數量</th>
+                                        <th class="text-end">佔比</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="typesTableBody">
+                                    <!-- 資料將由JavaScript填充 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 節能效益分析 -->
+            <div class="tab-pane fade" id="energy-tab-pane" role="tabpanel" aria-labelledby="energy-tab" tabindex="0">
+                <div class="card mb-4">
+                    <div class="card-header">LED燈具節能效益分析</div>
+                    <div class="card-body">
+                        <p class="text-center mb-4">基於已安裝 15,435 個LED燈具估算</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="statistic-box">
+                                    <div class="energy-icon">⚡</div>
+                                    <h3>年度節電量</h3>
+                                    <div class="statistic-value">1,081,685</div>
+                                    <div class="statistic-label">度電</div>
+                                    <p class="text-muted mt-2">相當於約 416 個家庭一年的用電量</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="statistic-box">
+                                    <div class="energy-icon">💰</div>
+                                    <h3>年度節省電費</h3>
+                                    <div class="statistic-value">3,245,054</div>
+                                    <div class="statistic-label">元新台幣</div>
+                                    <p class="text-muted mt-2">相較使用傳統燈具節省的電費金額</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="statistic-box">
+                                    <div class="energy-icon">🌳</div>
+                                    <h3>年度減少碳排放</h3>
+                                    <div class="statistic-value">550.58</div>
+                                    <div class="statistic-label">公噸CO<sub>2</sub></div>
+                                    <p class="text-muted mt-2">相當於約 3,670 棵樹一年的碳吸收量</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">節能效益說明</div>
+                            <div class="card-body">
+                                <ul class="reason-list">
+                                    <li>LED燈具比傳統燈具平均節能60%，壽命更長達3-5倍</li>
+                                    <li>校園全面更換LED燈具後，預計15年內可節省超過4,800萬元電費</li>
+                                    <li>未來可透過智能照明控制系統，進一步提升能源使用效率</li>
+                                    <li>儘管有2%的燈具因特殊需求無法更換為LED，但其他區域的節能效益已相當可觀</li>
+                                    <li>此節能計畫不僅降低了學校營運成本，也為環境永續發展做出具體貢獻</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="card mt-4">
+                            <div class="card-header">本計畫與輔大其他節能計畫的協同效益</div>
+                            <div class="card-body">
+                                <p>LED燈具更換計畫與輔大其他節能減碳計畫產生協同效應，共同實現更顯著的節能減碳成效。本計畫年減碳量550.58公噸CO<sub>2</sub>，結合「2018年度節能績效保證示範補助計畫」(年減碳939.4公噸CO<sub>2</sub>e)及「2021年度節能績效保證示範補助計畫」(年減碳737公噸CO<sub>2</sub>e)，使輔大在節能減碳領域取得更為顯著的整體成果。</p>
+                                
+                                <div class="alert alert-success mt-3">
+                                    <h6 class="alert-heading">計畫總體成效</h6>
+                                    <p class="mb-0">結合照明、空調與其他節能措施，輔大近年來的節能減碳計畫每年可減少超過2,200公噸的二氧化碳排放，為全國大專校院節能減碳工作樹立良好典範。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 計算方法說明 -->
+            <div class="tab-pane fade" id="calculation-tab-pane" role="tabpanel" aria-labelledby="calculation-tab" tabindex="0">
+                <div class="card mb-4">
+                    <div class="card-header">節能效益計算方法詳細說明</div>
+                    <div class="card-body">
+                        <h4 class="mb-4">計算參數說明</h4>
+                        
+                        <table class="parameter-table">
+                            <thead>
+                                <tr>
+                                    <th width="25%">參數</th>
+                                    <th width="20%">數值</th>
+                                    <th width="55%">說明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>LED燈具總數</td>
+                                    <td>15,435 個</td>
+                                    <td>校園已安裝的LED燈具數量，基於110年度數據</td>
+                                </tr>
+                                <tr>
+                                    <td>傳統燈具平均功率</td>
+                                    <td>40 瓦</td>
+                                    <td>傳統燈具（如螢光燈）的平均功率估算值</td>
+                                </tr>
+                                <tr>
+                                    <td>LED燈具平均功率</td>
+                                    <td>16 瓦</td>
+                                    <td>LED燈具的平均功率估算值</td>
+                                </tr>
+                                <tr>
+                                    <td>每日平均使用時間</td>
+                                    <td>8 小時</td>
+                                    <td>燈具每天平均使用時數，考慮不同場所使用情況</td>
+                                </tr>
+                                <tr>
+                                    <td>年運作天數</td>
+                                    <td>365 天</td>
+                                    <td>全年度燈具使用天數（含假日，部分區域仍有使用）</td>
+                                </tr>
+                                <tr>
+                                    <td>平均每度電費</td>
+                                    <td>3 元新台幣</td>
+                                    <td>基於台灣平均電費估算</td>
+                                </tr>
+                                <tr>
+                                    <td>碳排放係數</td>
+                                    <td>0.509 公斤CO<sub>2</sub>/度</td>
+                                    <td>依據經濟部能源局公告之電力排放係數</td>
+                                </tr>
+                                <tr>
+                                    <td>每棵樹年碳吸收量</td>
+                                    <td>0.15 公噸CO<sub>2</sub>/年</td>
+                                    <td>成年樹木平均每年碳吸收量估算值</td>
+                                </tr>
+                                <tr>
+                                    <td>家庭平均年用電量</td>
+                                    <td>2,600 度/年</td>
+                                    <td>台灣平均每戶家庭年用電量</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 class="mt-5 mb-4">1. 年度節電量計算</h4>
+                        <div class="formula-box">
+                            <div class="formula">年度節電量 = LED燈具總數 × (傳統燈具功率 - LED燈具功率) × 每日使用時間 × 年運作天數 ÷ 1000</div>
+                            <div class="formula-description">計算單位：度電（千瓦時，kWh）</div>
+                            <div class="formula-description">說明：傳統燈具與LED燈具之間的功率差乘以使用時間，得出節省的用電量</div>
+                            <div class="calculation-example">
+                                <strong>實際計算範例：</strong><br>
+                                年度節電量 = 15,435 × (40W - 16W) × 8小時 × 365天 ÷ 1000<br>
+                                年度節電量 = 15,435 × 24W × 8小時 × 365天 ÷ 1000<br>
+                                年度節電量 = 15,435 × 0.024kW × 8小時 × 365天<br>
+                                年度節電量 = 1,081,685 度電
+                            </div>
+                        </div>
+
+                        <h4 class="mt-5 mb-4">2. 年度節省電費計算</h4>
+                        <div class="formula-box">
+                            <div class="formula">年度節省電費 = 年度節電量 × 平均每度電費</div>
+                            <div class="formula-description">計算單位：元新台幣</div>
+                            <div class="formula-description">說明：節省的電量乘以每度電的單價，得出總節省電費</div>
+                            <div class="calculation-example">
+                                <strong>實際計算範例：</strong><br>
+                                年度節省電費 = 1,081,685度 × 3元/度<br>
+                                年度節省電費 = 3,245,054元
+                            </div>
+                        </div>
+
+                        <h4 class="mt-5 mb-4">3. 年度減少碳排放計算</h4>
+                        <div class="formula-box">
+                            <div class="formula">年度減少碳排放 = 年度節電量 × 碳排放係數 ÷ 1000</div>
+                            <div class="formula-description">計算單位：公噸CO<sub>2</sub></div>
+                            <div class="formula-description">說明：節省的電量乘以每度電的碳排放係數，得出減少的碳排放量</div>
+                            <div class="calculation-example">
+                                <strong>實際計算範例：</strong><br>
+                                年度減少碳排放 = 1,081,685度 × 0.509公斤CO<sub>2</sub>/度 ÷ 1000<br>
+                                年度減少碳排放 = 550.58公噸CO<sub>2</sub>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-5 mb-4">4. 換算成等效樹木數量</h4>
+                        <div class="formula-box">
+                            <div class="formula">等效樹木數量 = 年度減少碳排放 ÷ 每棵樹年碳吸收量</div>
+                            <div class="formula-description">計算單位：棵樹</div>
+                            <div class="formula-description">說明：減少的碳排放量除以每棵樹每年平均吸收的碳量，得出等效的樹木數量</div>
+                            <div class="calculation-example">
+                                <strong>實際計算範例：</strong><br>
+                                等效樹木數量 = 550.58公噸CO<sub>2</sub> ÷ 0.15公噸CO<sub>2</sub>/棵<br>
+                                等效樹木數量 = 3,670棵樹
+                            </div>
+                        </div>
+
+                        <h4 class="mt-5 mb-4">5. 換算成等效家庭用電量</h4>
+                        <div class="formula-box">
+                            <div class="formula">等效家庭數量 = 年度節電量 ÷ 家庭平均年用電量</div>
+                            <div class="formula-description">計算單位：戶家庭</div>
+                            <div class="formula-description">說明：節省的電量除以平均每戶家庭年用電量，得出等效的家庭數量</div>
+                            <div class="calculation-example">
+                                <strong>實際計算範例：</strong><br>
+                                等效家庭數量 = 1,081,685度 ÷ 2,600度/戶<br>
+                                等效家庭數量 = 416戶家庭
+                            </div>
+                        </div>
+                        
+                        <h4 class="mt-5 mb-4">注意事項與數據來源</h4>
+                        <div class="card">
+                            <div class="card-body">
+                                <ul class="reason-list">
+                                    <li><strong>功率估算：</strong>傳統燈具與LED燈具的平均功率是根據校園內各種燈具類型的加權平均值估算</li>
+                                    <li><strong>使用時間：</strong>每日8小時的使用時間考慮了不同區域的使用情況，包括教室、辦公室、走廊等，部分區域如24小時開放的空間可能使用時間更長</li>
+                                    <li><strong>碳排放係數：</strong>使用經濟部能源局公告之電力排放係數，隨台灣能源結構變化，此係數可能有所調整</li>
+                                    <li><strong>樹木碳吸收：</strong>樹木碳吸收量因樹種、年齡、生長條件不同而異，使用一般成年樹木平均值估算</li>
+                                    <li><strong>計算簡化：</strong>為便於計算與理解，部分參數採用簡化值，實際效益可能因燈具類型、使用模式等因素而有所不同</li>
+                                    <li><strong>長期效益：</strong>LED燈具的長壽命（可達傳統燈具的3-5倍）帶來的維護成本節省未納入計算</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>資料來源: 輔大-110年改善後LED燈具安裝數量表 / 經濟部能源局與教育部節能減碳計畫資料</p>
+            <p>製作日期: 2025年5月8日</p>
+        </div>
+    </div>
+
+    <!-- 引入Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 引入Font Awesome -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    
+    <script>
+        // 數據
+        const coverageData = [
+            { name: "已安裝LED燈具", value: 15435, percentage: 98 },
+            { name: "未更換燈具", value: 315, percentage: 2, description: "因設備特殊要求無法使用LED燈具" }
+        ];
+        
+        const buildingData = [
+            {"name":"公博樓", "value": 2136},
+            {"name":"進修部大樓", "value": 1718},
+            {"name":"利瑪竇大樓", "value": 1558},
+            {"name":"羅耀拉大樓", "value": 1428},
+            {"name":"朝橒樓", "value": 1163},
+            {"name":"其他建築物", "value": 7432}
+        ];
+        
+        const lightTypeData = [
+            {"name":"T8輕鋼架2呎x4", "value": 6312},
+            {"name":"T8山型4呎x2", "value": 1674},
+            {"name":"T8工事燈4呎x2", "value": 1005},
+            {"name":"9W燈泡 (15CM 崁燈)", "value": 881},
+            {"name":"平板燈2呎x2(智控)", "value": 779},
+            {"name":"T8 4呎層板燈", "value": 764},
+            {"name":"T8山型2呎x2", "value": 614},
+            {"name":"4呎線型燈(智控)", "value": 605},
+            {"name":"T8山型4呎x1", "value": 456},
+            {"name":"T8輕鋼架 4呎x2", "value": 302},
+            {"name":"其他類型", "value": 2043}
+        ];
+        
+        // 格式化百分比
+        function formatPercent(value, total) {
+            return ((value / total) * 100).toFixed(1) + '%';
+        }
+        
+        // 計算總數
+        const totalCoverage = coverageData.reduce((sum, item) => sum + item.value, 0);
+        const totalBuildings = buildingData.reduce((sum, item) => sum + item.value, 0);
+        const totalLightTypes = lightTypeData.reduce((sum, item) => sum + item.value, 0);
+        
+        // 顏色
+        const COLORS = [
+            '#4682B4', '#5F9EA0', '#6495ED', '#7B68EE', '#6A5ACD', 
+            '#483D8B', '#9370DB', '#8A2BE2', '#4B0082', '#9400D3', '#9932CC'
+        ];
+        
+        const COVERAGE_COLORS = ['#4CAF50', '#FF9800'];
+
+        // 初始化圖表
+        document.addEventListener('DOMContentLoaded', function() {
+            // LED覆蓋率餅圖
+            const coverageCtx = document.getElementById('coverageChart').getContext('2d');
+            new Chart(coverageCtx, {
+                type: 'pie',
+                data: {
+                    labels: coverageData.map(item => `${item.name} (${item.percentage}%)`),
+                    datasets: [{
+                        data: coverageData.map(item => item.value),
+                        backgroundColor: COVERAGE_COLORS,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value.toLocaleString()} 個`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 建築物餅圖
+            const buildingsPieCtx = document.getElementById('buildingsPieChart').getContext('2d');
+            new Chart(buildingsPieCtx, {
+                type: 'pie',
+                data: {
+                    labels: buildingData.map(item => item.name),
+                    datasets: [{
+                        data: buildingData.map(item => item.value),
+                        backgroundColor: COLORS,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const percentage = ((value / totalBuildings) * 100).toFixed(1);
+                                    return `${label}: ${value.toLocaleString()} 個 (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 建築物長條圖
+            const buildingsBarCtx = document.getElementById('buildingsBarChart').getContext('2d');
+            new Chart(buildingsBarCtx, {
+                type: 'bar',
+                data: {
+                    labels: buildingData.slice(0, 5).map(item => item.name),
+                    datasets: [{
+                        label: '燈具數量',
+                        data: buildingData.slice(0, 5).map(item => item.value),
+                        backgroundColor: COLORS.slice(0, 5),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw || 0;
+                                    const percentage = ((value / totalBuildings) * 100).toFixed(1);
+                                    return `${value.toLocaleString()} 個 (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 燈具類型餅圖
+            const typesPieCtx = document.getElementById('typesPieChart').getContext('2d');
+            new Chart(typesPieCtx, {
+                type: 'pie',
+                data: {
+                    labels: lightTypeData.map(item => item.name),
+                    datasets: [{
+                        data: lightTypeData.map(item => item.value),
+                        backgroundColor: COLORS,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const percentage = ((value / totalLightTypes) * 100).toFixed(1);
+                                    return `${label}: ${value.toLocaleString()} 個 (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 燈具類型長條圖
+            const typesBarCtx = document.getElementById('typesBarChart').getContext('2d');
+            new Chart(typesBarCtx, {
+                type: 'bar',
+                data: {
+                    labels: lightTypeData.slice(0, 7).map(item => item.name),
+                    datasets: [{
+                        label: '燈具數量',
+                        data: lightTypeData.slice(0, 7).map(item => item.value),
+                        backgroundColor: COLORS.slice(0, 7),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw || 0;
+                                    const percentage = ((value / totalLightTypes) * 100).toFixed(1);
+                                    return `${value.toLocaleString()} 個 (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 填充建築物表格
+            const buildingsTableBody = document.getElementById('buildingsTableBody');
+            buildingData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td class="text-end">${item.value.toLocaleString()}</td>
+                    <td class="text-end">${formatPercent(item.value, totalBuildings)}</td>
+                `;
+                buildingsTableBody.appendChild(row);
+            });
+            
+            // 填充燈具類型表格
+            const typesTableBody = document.getElementById('typesTableBody');
+            lightTypeData.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td class="text-end">${item.value.toLocaleString()}</td>
+                    <td class="text-end">${formatPercent(item.value, totalLightTypes)}</td>
+                `;
+                typesTableBody.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
